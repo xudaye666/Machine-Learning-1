@@ -128,10 +128,7 @@ def classifyNB(vec2Classify, p0Vec, p1Vec, pClass1):
 	p0 = reduce(lambda x,y:x*y, vec2Classify * p0Vec) * (1.0 - pClass1)
 	print('p0:',p0)
 	print('p1:',p1)
-	if p1 > p0:
-		return 1
-	else: 
-		return 0
+	return 1 if p1 > p0 else 0
 
 """
 函数说明:测试朴素贝叶斯分类器
@@ -150,9 +147,7 @@ Modify:
 def testingNB():
 	listOPosts,listClasses = loadDataSet()									#创建实验样本
 	myVocabList = createVocabList(listOPosts)								#创建词汇表
-	trainMat=[]
-	for postinDoc in listOPosts:
-		trainMat.append(setOfWords2Vec(myVocabList, postinDoc))				#将实验样本向量化
+	trainMat = [setOfWords2Vec(myVocabList, postinDoc) for postinDoc in listOPosts]
 	p0V,p1V,pAb = trainNB0(np.array(trainMat),np.array(listClasses))		#训练朴素贝叶斯分类器
 	testEntry = ['love', 'my', 'dalmation']									#测试样本1
 	thisDoc = np.array(setOfWords2Vec(myVocabList, testEntry))				#测试样本向量化

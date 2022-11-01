@@ -17,13 +17,12 @@ def loadDataSet(fileName):
 		2017-11-19
 	"""
 	numFeat = len(open(fileName).readline().split('\t')) - 1
-	xArr = []; yArr = []
+	xArr = []
+	yArr = []
 	fr = open(fileName)
-	for line in fr.readlines():
-		lineArr =[]
+	for line in fr:
 		curLine = line.strip().split('\t')
-		for i in range(numFeat):
-			lineArr.append(float(curLine[i]))
+		lineArr = [float(curLine[i]) for i in range(numFeat)]
 		xArr.append(lineArr)
 		yArr.append(float(curLine[-1]))
 	return xArr, yArr
@@ -90,13 +89,13 @@ def standRegres(xArr,yArr):
 	Modify:
 		2017-11-19
 	"""
-	xMat = np.mat(xArr); yMat = np.mat(yArr).T
+	xMat = np.mat(xArr)
+	yMat = np.mat(yArr).T
 	xTx = xMat.T * xMat							#根据文中推导的公示计算回归系数
 	if np.linalg.det(xTx) == 0.0:
 		print("矩阵为奇异矩阵,不能求逆")
 		return
-	ws = xTx.I * (xMat.T*yMat)
-	return ws
+	return xTx.I * (xMat.T*yMat)
 
 def rssError(yArr, yHatArr):
 	"""
@@ -112,19 +111,19 @@ def rssError(yArr, yHatArr):
 if __name__ == '__main__':
 	abX, abY = loadDataSet('abalone.txt')
 	print('训练集与测试集相同:局部加权线性回归,核k的大小对预测的影响:')
-	yHat01 = lwlrTest(abX[0:99], abX[0:99], abY[0:99], 0.1)
-	yHat1 = lwlrTest(abX[0:99], abX[0:99], abY[0:99], 1)
-	yHat10 = lwlrTest(abX[0:99], abX[0:99], abY[0:99], 10)
-	print('k=0.1时,误差大小为:',rssError(abY[0:99], yHat01.T))
-	print('k=1  时,误差大小为:',rssError(abY[0:99], yHat1.T))
-	print('k=10 时,误差大小为:',rssError(abY[0:99], yHat10.T))
+	yHat01 = lwlrTest(abX[:99], abX[:99], abY[:99], 0.1)
+	yHat1 = lwlrTest(abX[:99], abX[:99], abY[:99], 1)
+	yHat10 = lwlrTest(abX[:99], abX[:99], abY[:99], 10)
+	print('k=0.1时,误差大小为:', rssError(abY[:99], yHat01.T))
+	print('k=1  时,误差大小为:', rssError(abY[:99], yHat1.T))
+	print('k=10 时,误差大小为:', rssError(abY[:99], yHat10.T))
 
 	print('')
 
 	print('训练集与测试集不同:局部加权线性回归,核k的大小是越小越好吗？更换数据集,测试结果如下:')
-	yHat01 = lwlrTest(abX[100:199], abX[0:99], abY[0:99], 0.1)
-	yHat1 = lwlrTest(abX[100:199], abX[0:99], abY[0:99], 1)
-	yHat10 = lwlrTest(abX[100:199], abX[0:99], abY[0:99], 10)
+	yHat01 = lwlrTest(abX[100:199], abX[:99], abY[:99], 0.1)
+	yHat1 = lwlrTest(abX[100:199], abX[:99], abY[:99], 1)
+	yHat10 = lwlrTest(abX[100:199], abX[:99], abY[:99], 10)
 	print('k=0.1时,误差大小为:',rssError(abY[100:199], yHat01.T))
 	print('k=1  时,误差大小为:',rssError(abY[100:199], yHat1.T))
 	print('k=10 时,误差大小为:',rssError(abY[100:199], yHat10.T))
@@ -133,6 +132,6 @@ if __name__ == '__main__':
 
 	print('训练集与测试集不同:简单的线性归回与k=1时的局部加权线性回归对比:')
 	print('k=1时,误差大小为:', rssError(abY[100:199], yHat1.T))
-	ws = standRegres(abX[0:99], abY[0:99])
+	ws = standRegres(abX[:99], abY[:99])
 	yHat = np.mat(abX[100:199]) * ws
 	print('简单的线性回归误差大小:', rssError(abY[100:199], yHat.T.A))

@@ -17,13 +17,12 @@ def loadDataSet(fileName):
 		2017-11-12
 	"""
 	numFeat = len(open(fileName).readline().split('\t')) - 1
-	xArr = []; yArr = []
+	xArr = []
+	yArr = []
 	fr = open(fileName)
-	for line in fr.readlines():
-		lineArr =[]
+	for line in fr:
 		curLine = line.strip().split('\t')
-		for i in range(numFeat):
-			lineArr.append(float(curLine[i]))
+		lineArr = [float(curLine[i]) for i in range(numFeat)]
 		xArr.append(lineArr)
 		yArr.append(float(curLine[-1]))
 	return xArr, yArr
@@ -41,13 +40,13 @@ def standRegres(xArr,yArr):
 	Modify:
 		2017-11-12
 	"""
-	xMat = np.mat(xArr); yMat = np.mat(yArr).T
+	xMat = np.mat(xArr)
+	yMat = np.mat(yArr).T
 	xTx = xMat.T * xMat							#根据文中推导的公示计算回归系数
 	if np.linalg.det(xTx) == 0.0:
 		print("矩阵为奇异矩阵,不能求逆")
 		return
-	ws = xTx.I * (xMat.T*yMat)
-	return ws
+	return xTx.I * (xMat.T*yMat)
 
 
 def plotDataSet():

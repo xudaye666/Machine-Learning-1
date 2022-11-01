@@ -66,38 +66,34 @@ Modify:
 """
 def file2matrix(filename):
 	#打开文件,此次应指定编码，
-    
-    fr = open(filename,'r',encoding = 'utf-8')
-	#读取文件所有内容
-    arrayOLines = fr.readlines()
-    #针对有BOM的UTF-8文本，应该去掉BOM，否则后面会引发错误。
-    arrayOLines[0]=arrayOLines[0].lstrip('\ufeff')
-	#得到文件行数
-    numberOfLines = len(arrayOLines)
-	#返回的NumPy矩阵,解析完成的数据:numberOfLines行,3列
-    returnMat = np.zeros((numberOfLines,3))
-	#返回的分类标签向量
-    classLabelVector = []
-	#行的索引值
-    index = 0
 
-    for line in arrayOLines:
+	fr = open(filename,'r',encoding = 'utf-8')
+	#读取文件所有内容
+	arrayOLines = fr.readlines()
+	#针对有BOM的UTF-8文本，应该去掉BOM，否则后面会引发错误。
+	arrayOLines[0]=arrayOLines[0].lstrip('\ufeff')
+	#得到文件行数
+	numberOfLines = len(arrayOLines)
+	#返回的NumPy矩阵,解析完成的数据:numberOfLines行,3列
+	returnMat = np.zeros((numberOfLines,3))
+	#返回的分类标签向量
+	classLabelVector = []
+	for index, line in enumerate(arrayOLines):
 		#s.strip(rm)，当rm空时,默认删除空白符(包括'\n','\r','\t',' ')
-        line = line.strip()
+		line = line.strip()
 		#使用s.split(str="",num=string,cout(str))将字符串根据'\t'分隔符进行切片。
-        listFromLine = line.split('\t')
+		listFromLine = line.split('\t')
 		#将数据前三列提取出来,存放到returnMat的NumPy矩阵中,也就是特征矩阵
-        returnMat[index,:] = listFromLine[0:3]
+		returnMat[index,:] = listFromLine[:3]
 		#根据文本中标记的喜欢的程度进行分类,1代表不喜欢,2代表魅力一般,3代表极具魅力   
 		# 对于datingTestSet2.txt  最后的标签是已经经过处理的 标签已经改为了1, 2, 3
-        if listFromLine[-1] == 'didntLike':
-            classLabelVector.append(1)
-        elif listFromLine[-1] == 'smallDoses':
-            classLabelVector.append(2)
-        elif listFromLine[-1] == 'largeDoses':
-            classLabelVector.append(3)
-        index += 1
-    return returnMat, classLabelVector
+		if listFromLine[-1] == 'didntLike':
+		    classLabelVector.append(1)
+		elif listFromLine[-1] == 'smallDoses':
+		    classLabelVector.append(2)
+		elif listFromLine[-1] == 'largeDoses':
+		    classLabelVector.append(3)
+	return returnMat, classLabelVector
 
 """
 函数说明:可视化数据
@@ -122,9 +118,9 @@ def showdatas(datingDataMat, datingLabels):
 	for i in datingLabels:
 		if i == 1:
 			LabelsColors.append('black')
-		if i == 2:
+		elif i == 2:
 			LabelsColors.append('orange')
-		if i == 3:
+		elif i == 3:
 			LabelsColors.append('red')
 	#画出散点图,以datingDataMat矩阵的第一(飞行常客例程)、第二列(玩游戏)数据画散点数据,散点大小为15,透明度为0.5
 	axs[0][0].scatter(x=datingDataMat[:,0], y=datingDataMat[:,1], color=LabelsColors,s=15, alpha=.5)
@@ -132,8 +128,8 @@ def showdatas(datingDataMat, datingLabels):
 	axs0_title_text = axs[0][0].set_title(u'每年获得的飞行常客里程数与玩视频游戏所消耗时间占比',FontProperties=font)
 	axs0_xlabel_text = axs[0][0].set_xlabel(u'每年获得的飞行常客里程数',FontProperties=font)
 	axs0_ylabel_text = axs[0][0].set_ylabel(u'玩视频游戏所消耗时间占比',FontProperties=font)
-	plt.setp(axs0_title_text, size=9, weight='bold', color='red')  
-	plt.setp(axs0_xlabel_text, size=7, weight='bold', color='black')  
+	plt.setp(axs0_title_text, size=9, weight='bold', color='red')
+	plt.setp(axs0_xlabel_text, size=7, weight='bold', color='black')
 	plt.setp(axs0_ylabel_text, size=7, weight='bold', color='black') 
 
 	#画出散点图,以datingDataMat矩阵的第一(飞行常客例程)、第三列(冰激凌)数据画散点数据,散点大小为15,透明度为0.5
@@ -142,8 +138,8 @@ def showdatas(datingDataMat, datingLabels):
 	axs1_title_text = axs[0][1].set_title(u'每年获得的飞行常客里程数与每周消费的冰激淋公升数',FontProperties=font)
 	axs1_xlabel_text = axs[0][1].set_xlabel(u'每年获得的飞行常客里程数',FontProperties=font)
 	axs1_ylabel_text = axs[0][1].set_ylabel(u'每周消费的冰激淋公升数',FontProperties=font)
-	plt.setp(axs1_title_text, size=9, weight='bold', color='red')  
-	plt.setp(axs1_xlabel_text, size=7, weight='bold', color='black')  
+	plt.setp(axs1_title_text, size=9, weight='bold', color='red')
+	plt.setp(axs1_xlabel_text, size=7, weight='bold', color='black')
 	plt.setp(axs1_ylabel_text, size=7, weight='bold', color='black') 
 
 	#画出散点图,以datingDataMat矩阵的第二(玩游戏)、第三列(冰激凌)数据画散点数据,散点大小为15,透明度为0.5
@@ -152,12 +148,12 @@ def showdatas(datingDataMat, datingLabels):
 	axs2_title_text = axs[1][0].set_title(u'玩视频游戏所消耗时间占比与每周消费的冰激淋公升数',FontProperties=font)
 	axs2_xlabel_text = axs[1][0].set_xlabel(u'玩视频游戏所消耗时间占比',FontProperties=font)
 	axs2_ylabel_text = axs[1][0].set_ylabel(u'每周消费的冰激淋公升数',FontProperties=font)
-	plt.setp(axs2_title_text, size=9, weight='bold', color='red')  
-	plt.setp(axs2_xlabel_text, size=7, weight='bold', color='black')  
-	plt.setp(axs2_ylabel_text, size=7, weight='bold', color='black') 
+	plt.setp(axs2_title_text, size=9, weight='bold', color='red')
+	plt.setp(axs2_xlabel_text, size=7, weight='bold', color='black')
+	plt.setp(axs2_ylabel_text, size=7, weight='bold', color='black')
 	#设置图例
 	didntLike = mlines.Line2D([], [], color='black', marker='.',
-                      markersize=6, label='didntLike')
+	markersize=6, label='didntLike')
 	smallDoses = mlines.Line2D([], [], color='orange', marker='.',
 	                  markersize=6, label='smallDoses')
 	largeDoses = mlines.Line2D([], [], color='red', marker='.',
@@ -269,7 +265,7 @@ def classifyPerson():
 	#返回分类结果
 	classifierResult = classify0(norminArr, normMat, datingLabels, 3)
 	#打印结果
-	print("你可能%s这个人" % (resultList[classifierResult-1]))
+	print(f"你可能{resultList[classifierResult - 1]}这个人")
 
 """
 函数说明:main函数

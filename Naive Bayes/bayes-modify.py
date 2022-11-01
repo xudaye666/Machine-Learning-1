@@ -125,10 +125,7 @@ Modify:
 def classifyNB(vec2Classify, p0Vec, p1Vec, pClass1):
     p1 = sum(vec2Classify * p1Vec) + np.log(pClass1)    	#对应元素相乘。logA * B = logA + logB，所以这里加上log(pClass1)
     p0 = sum(vec2Classify * p0Vec) + np.log(1.0 - pClass1)
-    if p1 > p0:
-        return 1
-    else: 
-        return 0
+    return 1 if p1 > p0 else 0
 
 """
 函数说明:接收一个大字符串并将其解析为字符串列表
@@ -164,7 +161,9 @@ Modify:
     2017-08-14
 """
 def spamTest():
-    docList = []; classList = []; fullText = []
+    docList = []
+    classList = []
+    fullText = []
     for i in range(1, 26):                                                  #遍历25个txt文件
         wordList = textParse(open('email/spam/%d.txt' % i, 'r').read())     #读取每个垃圾邮件，并字符串转换成字符串列表
         docList.append(wordList)
@@ -175,12 +174,14 @@ def spamTest():
         fullText.append(wordList)
         classList.append(0)                                                 #标记非垃圾邮件，1表示垃圾文件    
     vocabList = createVocabList(docList)                                    #创建词汇表，不重复
-    trainingSet = list(range(50)); testSet = []                             #创建存储训练集的索引值的列表和测试集的索引值的列表                        
-    for i in range(10):                                                     #从50个邮件中，随机挑选出40个作为训练集,10个做测试集
+    trainingSet = list(range(50))
+    testSet = []                             #创建存储训练集的索引值的列表和测试集的索引值的列表                        
+    for _ in range(10):
         randIndex = int(random.uniform(0, len(trainingSet)))                #随机选取索索引值
         testSet.append(trainingSet[randIndex])                              #添加测试集的索引值
         del(trainingSet[randIndex])                                         #在训练集列表中删除添加到测试集的索引值
-    trainMat = []; trainClasses = []                                        #创建训练集矩阵和训练集类别标签系向量             
+    trainMat = []
+    trainClasses = []                                        #创建训练集矩阵和训练集类别标签系向量             
     for docIndex in trainingSet:                                            #遍历训练集
         trainMat.append(setOfWords2Vec(vocabList, docList[docIndex]))       #将生成的词集模型添加到训练矩阵中
         trainClasses.append(classList[docIndex])                            #将类别添加到训练集类别标签系向量中

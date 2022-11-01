@@ -15,13 +15,12 @@ Modify:
 
 def loadDataSet(fileName):
 	numFeat = len((open(fileName).readline().split('\t')))
-	dataMat = []; labelMat = []
+	dataMat = []
+	labelMat = []
 	fr = open(fileName)
-	for line in fr.readlines():
-		lineArr = []
+	for line in fr:
 		curLine = line.strip().split('\t')
-		for i in range(numFeat - 1):
-			lineArr.append(float(curLine[i]))
+		lineArr = [float(curLine[i]) for i in range(numFeat - 1)]
 		dataMat.append(lineArr)
 		labelMat.append(float(curLine[-1]))
 
@@ -96,7 +95,7 @@ def adaBoostTrainDS(dataArr, classLabels, numIt = 40):
 	m = np.shape(dataArr)[0]
 	D = np.mat(np.ones((m, 1)) / m)    										#初始化权重
 	aggClassEst = np.mat(np.zeros((m,1)))
-	for i in range(numIt):
+	for _ in range(numIt):
 		bestStump, error, classEst = buildStump(dataArr, classLabels, D) 	#构建单层决策树
 		# print("D:",D.T)
 		alpha = float(0.5 * np.log((1.0 - error) / max(error, 1e-16))) 		#计算弱学习算法权重alpha,使error不等于0,因为分母不能为0
@@ -104,7 +103,7 @@ def adaBoostTrainDS(dataArr, classLabels, numIt = 40):
 		weakClassArr.append(bestStump)                  					#存储单层决策树
 		# print("classEst: ", classEst.T)
 		expon = np.multiply(-1 * alpha * np.mat(classLabels).T, classEst) 	#计算e的指数项
-		D = np.multiply(D, np.exp(expon))                           		   
+		D = np.multiply(D, np.exp(expon))
 		D = D / D.sum()														#根据样本权重公式，更新样本权重
 		#计算AdaBoost误差，当误差为0的时候，退出循环
 		aggClassEst += alpha * classEst  									#计算类别估计累计值								
