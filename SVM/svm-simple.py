@@ -21,9 +21,10 @@ Modify:
     2017-09-21
 """
 def loadDataSet(fileName):
-	dataMat = []; labelMat = []
+	dataMat = []
+	labelMat = []
 	fr = open(fileName)
-	for line in fr.readlines():                                     #逐行读取，滤除空格等
+	for line in fr:
 		lineArr = line.strip().split('\t')
 		dataMat.append([float(lineArr[0]), float(lineArr[1])])      #添加数据
 		labelMat.append(float(lineArr[2]))                          #添加标签
@@ -49,7 +50,7 @@ Modify:
 """
 def selectJrand(i, m):
 	j = i                                 #选择一个不等于i的j
-	while (j == i):
+	while j == j:
 		j = int(random.uniform(0, m))
 	return j
 
@@ -132,9 +133,11 @@ Modify:
 """
 def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
 	#转换为numpy的mat存储
-	dataMatrix = np.mat(dataMatIn); labelMat = np.mat(classLabels).transpose()
+	dataMatrix = np.mat(dataMatIn)
+	labelMat = np.mat(classLabels).transpose()
 	#初始化b参数，统计dataMatrix的维度
-	b = 0; m,n = np.shape(dataMatrix)
+	b = 0
+	m,n = np.shape(dataMatrix)
 	#初始化alpha参数，设为0
 	alphas = np.mat(np.zeros((m,1)))
 	#初始化迭代次数
@@ -154,7 +157,8 @@ def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
 				fXj = float(np.multiply(alphas,labelMat).T*(dataMatrix*dataMatrix[j,:].T)) + b
 				Ej = fXj - float(labelMat[j])
 				#保存更新前的aplpha值，使用深拷贝
-				alphaIold = alphas[i].copy(); alphaJold = alphas[j].copy();
+				alphaIold = alphas[i].copy()
+				alphaJold = alphas[j].copy();
 				#步骤2：计算上下界L和H
 				if (labelMat[i] != labelMat[j]):
 				    L = max(0, alphas[j] - alphas[i])
@@ -177,8 +181,8 @@ def smoSimple(dataMatIn, classLabels, C, toler, maxIter):
 				b1 = b - Ei- labelMat[i]*(alphas[i]-alphaIold)*dataMatrix[i,:]*dataMatrix[i,:].T - labelMat[j]*(alphas[j]-alphaJold)*dataMatrix[i,:]*dataMatrix[j,:].T
 				b2 = b - Ej- labelMat[i]*(alphas[i]-alphaIold)*dataMatrix[i,:]*dataMatrix[j,:].T - labelMat[j]*(alphas[j]-alphaJold)*dataMatrix[j,:]*dataMatrix[j,:].T
 				#步骤8：根据b_1和b_2更新b
-				if (0 < alphas[i]) and (C > alphas[i]): b = b1
-				elif (0 < alphas[j]) and (C > alphas[j]): b = b2
+				if alphas[i] > 0 and C > alphas[i]: b = b1
+				elif alphas[j] > 0 and C > alphas[j]: b = b2
 				else: b = (b1 + b2)/2.0
 				#统计优化次数
 				alphaPairsChanged += 1

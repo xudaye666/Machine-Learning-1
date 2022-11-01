@@ -79,7 +79,7 @@ def gradAscent(dataMatIn, classLabels):
 	alpha = 0.01														#移动步长,也就是学习速率,控制更新的幅度。
 	maxCycles = 500														#最大迭代次数
 	weights = np.ones((n,1))
-	for k in range(maxCycles):
+	for _ in range(maxCycles):
 		h = sigmoid(dataMatrix * weights)								#梯度上升矢量化公式
 		error = labelMat - h
 		weights = weights + alpha * dataMatrix.transpose() * error
@@ -106,22 +106,20 @@ Modify:
 def colicTest():
 	frTrain = open('horseColicTraining.txt')										#打开训练集
 	frTest = open('horseColicTest.txt')												#打开测试集
-	trainingSet = []; trainingLabels = []
-	for line in frTrain.readlines():
+	trainingSet = []
+	trainingLabels = []
+	for line in frTrain:
 		currLine = line.strip().split('\t')
-		lineArr = []
-		for i in range(len(currLine)-1):
-			lineArr.append(float(currLine[i]))
+		lineArr = [float(currLine[i]) for i in range(len(currLine)-1)]
 		trainingSet.append(lineArr)
 		trainingLabels.append(float(currLine[-1]))
 	trainWeights = stocGradAscent1(np.array(trainingSet), trainingLabels,500)		#使用改进的随即上升梯度训练
-	errorCount = 0; numTestVec = 0.0
-	for line in frTest.readlines():
+	errorCount = 0
+	numTestVec = 0.0
+	for line in frTest:
 		numTestVec += 1.0
 		currLine = line.strip().split('\t')
-		lineArr =[]
-		for i in range(len(currLine)-1):
-			lineArr.append(float(currLine[i]))
+		lineArr = [float(currLine[i]) for i in range(len(currLine)-1)]
 		if int(classifyVector(np.array(lineArr), trainWeights))!= int(currLine[-1]):
 			errorCount += 1
 	errorRate = (float(errorCount)/numTestVec) * 100 								#错误率计算
@@ -145,9 +143,8 @@ Modify:
 	2017-09-05
 """
 def classifyVector(inX, weights):
-    prob = sigmoid(sum(inX*weights))
-    if prob > 0.5: return 1.0
-    else: return 0.0
+	prob = sigmoid(sum(inX*weights))
+	return 1.0 if prob > 0.5 else 0.0
 
 """
 函数说明:使用Sklearn构建Logistic回归分类器
@@ -168,20 +165,18 @@ Modify:
 def colicSklearn():
 	frTrain = open('horseColicTraining.txt')										#打开训练集
 	frTest = open('horseColicTest.txt')												#打开测试集
-	trainingSet = []; trainingLabels = []
-	testSet = []; testLabels = []
-	for line in frTrain.readlines():
+	trainingSet = []
+	trainingLabels = []
+	testSet = []
+	testLabels = []
+	for line in frTrain:
 		currLine = line.strip().split('\t')
-		lineArr = []
-		for i in range(len(currLine)-1):
-			lineArr.append(float(currLine[i]))
+		lineArr = [float(currLine[i]) for i in range(len(currLine)-1)]
 		trainingSet.append(lineArr)
 		trainingLabels.append(float(currLine[-1]))
-	for line in frTest.readlines():
+	for line in frTest:
 		currLine = line.strip().split('\t')
-		lineArr =[]
-		for i in range(len(currLine)-1):
-			lineArr.append(float(currLine[i]))
+		lineArr = [float(currLine[i]) for i in range(len(currLine)-1)]
 		testSet.append(lineArr)
 		testLabels.append(float(currLine[-1]))
 	classifier = LogisticRegression(solver = 'sag',max_iter = 5000).fit(trainingSet, trainingLabels)

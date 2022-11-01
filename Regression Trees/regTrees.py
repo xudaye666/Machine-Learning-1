@@ -16,7 +16,7 @@ def loadDataSet(fileName):
 	"""
 	dataMat = []
 	fr = open(fileName)
-	for line in fr.readlines():
+	for line in fr:
 		curLine = line.strip().split('\t')
 		fltLine = list(map(float, curLine))					#转化为float类型
 		dataMat.append(fltLine)
@@ -165,11 +165,9 @@ def createTree(dataSet, leafType = regLeaf, errType = regErr, ops = (1, 4)):
 	#选择最佳切分特征和特征值
 	feat, val = chooseBestSplit(dataSet, leafType, errType, ops)
 	#r如果没有特征,则返回特征值
-	if feat == None: return val
+	if feat is None: return val
 	#回归树
-	retTree = {}
-	retTree['spInd'] = feat
-	retTree['spVal'] = val
+	retTree = {'spInd': feat, 'spVal': val}
 	#分成左数据集和右数据集
 	lSet, rSet = binSplitDataSet(dataSet, feat, val)
 	#创建左子树和右子树
@@ -230,21 +228,17 @@ def prune(tree, testData):
 	if isTree(tree['left']): tree['left'] = prune(tree['left'], lSet)
 	#处理右子树(剪枝)
 	if isTree(tree['right']): tree['right'] =  prune(tree['right'], rSet)
-	#如果当前结点的左右结点为叶结点
-	if not isTree(tree['left']) and not isTree(tree['right']):
-		lSet, rSet = binSplitDataSet(testData, tree['spInd'], tree['spVal'])
-		#计算没有合并的误差
-		errorNoMerge = np.sum(np.power(lSet[:,-1] - tree['left'],2)) + np.sum(np.power(rSet[:,-1] - tree['right'],2))
-		#计算合并的均值
-		treeMean = (tree['left'] + tree['right']) / 2.0
-		#计算合并的误差
-		errorMerge = np.sum(np.power(testData[:,-1] - treeMean, 2))
+	if isTree(tree['left']) or isTree(tree['right']):
+		return tree
+	lSet, rSet = binSplitDataSet(testData, tree['spInd'], tree['spVal'])
+	#计算没有合并的误差
+	errorNoMerge = np.sum(np.power(lSet[:,-1] - tree['left'],2)) + np.sum(np.power(rSet[:,-1] - tree['right'],2))
+	#计算合并的均值
+	treeMean = (tree['left'] + tree['right']) / 2.0
+	#计算合并的误差
+	errorMerge = np.sum(np.power(testData[:,-1] - treeMean, 2))
 		#如果合并的误差小于没有合并的误差,则合并
-		if errorMerge < errorNoMerge: 
-			# print("merging")
-			return treeMean
-		else: return tree
-	else: return tree
+	return treeMean if errorMerge < errorNoMerge else tree
 
 if __name__ == '__main__':
 	print('剪枝前:')

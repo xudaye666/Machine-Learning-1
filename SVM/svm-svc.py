@@ -62,7 +62,7 @@ def handwritingClassTest():
 		#将获得的类别添加到hwLabels中
 		hwLabels.append(classNumber)
 		#将每一个文件的1x1024数据存储到trainingMat矩阵中
-		trainingMat[i,:] = img2vector('trainingDigits/%s' % (fileNameStr))
+		trainingMat[i,:] = img2vector(f'trainingDigits/{fileNameStr}')
 	clf = SVC(C=200,kernel='rbf')
 	clf.fit(trainingMat,hwLabels)
 	#返回testDigits目录下的文件列表
@@ -78,7 +78,7 @@ def handwritingClassTest():
 		#获得分类的数字
 		classNumber = int(fileNameStr.split('_')[0])
 		#获得测试集的1x1024向量,用于训练
-		vectorUnderTest = img2vector('testDigits/%s' % (fileNameStr))
+		vectorUnderTest = img2vector(f'testDigits/{fileNameStr}')
 		#获得预测结果
 		# classifierResult = classify0(vectorUnderTest, trainingMat, hwLabels, 3)
 		classifierResult = clf.predict(vectorUnderTest)

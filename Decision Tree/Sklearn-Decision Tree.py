@@ -9,9 +9,7 @@ import pydotplus
 if __name__ == '__main__':
 	with open('lenses.txt', 'r') as fr:										#加载文件
 		lenses = [inst.strip().split('\t') for inst in fr.readlines()]		#处理文件
-	lenses_target = []														#提取每组数据的类别，保存在列表里
-	for each in lenses:
-		lenses_target.append(each[-1])
+	lenses_target = [each[-1] for each in lenses]
 	# print(lenses_target)
 
 	lensesLabels = ['age', 'prescript', 'astigmatic', 'tearRate']			#特征标签		

@@ -17,13 +17,12 @@ def loadDataSet(fileName):
 		2017-11-20
 	"""
 	numFeat = len(open(fileName).readline().split('\t')) - 1
-	xArr = []; yArr = []
+	xArr = []
+	yArr = []
 	fr = open(fileName)
-	for line in fr.readlines():
-		lineArr =[]
+	for line in fr:
 		curLine = line.strip().split('\t')
-		for i in range(numFeat):
-			lineArr.append(float(curLine[i]))
+		lineArr = [float(curLine[i]) for i in range(numFeat)]
 		xArr.append(lineArr)
 		yArr.append(float(curLine[-1]))
 	return xArr, yArr
@@ -47,8 +46,7 @@ def ridgeRegres(xMat, yMat, lam = 0.2):
 	if np.linalg.det(denom) == 0.0:
 		print("矩阵为奇异矩阵,不能求逆")
 		return
-	ws = denom.I * (xMat.T * yMat)
-	return ws
+	return denom.I * (xMat.T * yMat)
 
 def ridgeTest(xArr, yArr):
 	"""
